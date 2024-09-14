@@ -1,0 +1,65 @@
+main():
+
+	while True:
+
+		for endpoints in routing table:
+
+			if (we recorded routing data for that endpoint more than 5 secs ago):
+
+				remove that data
+
+		await_broadcast()
+
+		if (we didn't receive this message from ourselves):
+			
+			if (this message is outgoing):
+
+				if (this message is an outgoing scrub request):
+
+					if (we have routing information for the sender):
+
+						delete it
+
+					broadcast the scrub request forward
+
+					send confirmation back to the sender that the scrub request was a success
+
+				else if (this message is an outgoing ID search):
+
+					broadcast the search forward
+
+				else if (this message is an outgoing broadcast):
+
+					if (we have no routing data for the target):
+
+						broadcast the message forward
+
+					else if (we have routing data for the target):
+
+						forward the broadcast to only the identified next node
+
+
+			else if (this message is a reply):
+
+				if (this message is a return of a scrub request):
+
+					we can't forward the return because we've scrubbed/not saved the sender info, so we just print to our local terminal and move on
+
+				else if (this message is a return of an ID search):
+
+					forward the return to the original sender
+
+				else if (this message is a return of a broadcast):
+
+					if (we haven't saved routing data for the target of the broadcast):
+
+						save the node that directly sent us this message as the node to forward to when forwarding to the target
+						forward the return to the node that originally forwarded us this broadcast
+
+					else if (we have saved routing data for the target of the broadcast):
+
+						forward the return to the node that originall forwarded us this broadcast
+
+			if (we haven't recorded this broadcast before and it's not a scrub request):
+
+				record the broadcast ID and the node that forwarded it to us, so we can return it later

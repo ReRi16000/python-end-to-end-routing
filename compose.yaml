@@ -1,0 +1,235 @@
+# Defines a small topology of 3 routers, 5 networks and 2 endpoints
+# docker compose -f compose.yaml --profile routers up -d
+# docker compose -f compose.yaml --profile endpoints --profile routers up -d
+# docker compose -f compose.yaml --profile routers --profile endpoints down -t 1
+services:
+
+
+  # 3 routers connecting networks
+  router1:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router1
+    networks:
+      - access1
+      - edge1
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  router2:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router2
+    networks:
+      - access1
+      - edge2
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  router3:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router3
+    networks:
+      - access1
+      - edge3
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  router4:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router4
+    networks:
+      - access1
+      - access2
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  router5:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router5
+    networks:
+      - access2
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  router6:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 router.py
+    stdin_open: true
+    tty: true
+    environment:
+      HOSTNAME: router6
+    networks:
+      - access2
+      - edge6
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  # 3 endpoints creating traffic
+  endpoint1:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 endpoint.py AABB send
+    stdin_open: true
+    tty: true
+    depends_on:
+      - router1
+    environment:
+      HOSTNAME: endpoint1
+    networks:
+      - edge1
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  endpoint2:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 endpoint.py CCDD send
+    stdin_open: true
+    tty: true
+    depends_on:
+      - router2
+    environment:
+      HOSTNAME: endpoint2
+    networks:
+      - edge2
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  endpoint3:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 endpoint.py EEFF send
+    stdin_open: true
+    tty: true
+    depends_on:
+      - router3
+    environment:
+      HOSTNAME: endpoint3
+    networks:
+      - edge3
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+  endpoint6:
+    privileged: true
+    image: "pycimage"
+    build: .
+    volumes:
+      - .:/compnets
+    command: python3 endpoint.py 0011 listen
+    stdin_open: true
+    tty: true
+    depends_on:
+      - router6
+    environment:
+      HOSTNAME: endpoint6
+    networks:
+      - edge6
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+
+# 1 access network and 3 edge networks
+networks:
+  access1:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+  access2:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.24.0.0/24
+  edge1:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/24
+  edge2:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/24
+  edge3:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.23.0.0/24
+  edge6:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.26.0.0/24

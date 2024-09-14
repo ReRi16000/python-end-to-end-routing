@@ -1,0 +1,60 @@
+main():
+	
+	request IDs from other endpoints
+	
+	while True:
+		while listening:
+			await_broadcast()
+
+			if (we didn't receive this message from ourselves):
+
+				if (this a return of something we sent out):
+
+					if (this is a return of our ID request):
+
+						record the ID we were sent
+
+					else if (this is a return of our scrub request):
+
+						disconnect
+						break
+
+					else if (this is a return of a past broadcast):
+
+						state = send
+
+				else if (this is a broadcast sent for us): 
+
+					print(message)
+					send confirmation back that we received the broadcast
+
+				else if (this is an ID request by another endpoint):
+
+					send our own ID back through the same router
+
+				else if (this a scrub request by another endpoint):
+
+					remove that endpoint's ID from our records
+
+				else:
+					this broadcast isn't for us, so ignore it
+
+			else if (we did receive this broadcast from ourselves):
+				ignore
+
+		while sending:
+
+			if (we've sent fewer than 10 messages:
+
+				choose a random ID we have recorded
+				send a broadcast to that endpoint
+				state = listen
+
+			else if (we've sent 10 messages):
+
+				state = scrub
+
+		while scrubbing:
+
+			broadcast scrub request
+			state = listen
